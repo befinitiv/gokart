@@ -28,6 +28,8 @@
 
 #define MAX_REVERSE_POWER 100
 
+#define ROLLOUT_TIME 40
+
 int main (void)
 {
 	hbridge_init();
@@ -71,15 +73,26 @@ int main (void)
 				DEBUG_PRINT("driving forward %d\n", jp)
 				hbridge_power(jp/2, 0); //we half the power to stay safe
 				last_jp = jp;
+				cnt = 0;
 			}
 			else if(jp < 0) {
 				DEBUG_PRINT("driving reverse %d\n", jp)
 				hbridge_power(-jp/4, 1); //a quarter of the power to stay safe when reversing
 				last_jp = jp;
+				cnt = 0;
 			} else if(jp == 0) {
-				//just let it roll
-				DEBUG_PRINT("driving without power\n");
-				hbridge_idle();
+				if(cnt < ROLLOUT_TIME) {
+					//just let it roll
+					DEBUG_PRINT("driving without power\n");
+					hbridge_idle();
+					cnt++;
+				}
+				else
+				{
+					last_jp = 0;
+					state = IDLE;
+					DEBUG_PRINT("going to idle\n");
+				}
 			}
 		break;
 
