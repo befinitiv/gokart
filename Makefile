@@ -60,7 +60,7 @@ TARGET = gokart
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c
+SRC = $(TARGET).c hbridge.c uart.c joystick.c
 
 
 # List Assembler source files here.
