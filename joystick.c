@@ -1,5 +1,9 @@
+#include <math.h>
+#include <stdlib.h>
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
+
 
 uint8_t joystick_pos;
 

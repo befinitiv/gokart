@@ -1,6 +1,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
-
+#include <stdio.h>
 
 #include "hwdefs.h"
 #include "hbridge.h"
@@ -9,11 +9,19 @@
 
 
 
+
+#define DEBUG
+#ifdef DEBUG
+	#define DEBUG_PRINT(...) printf(__VA_ARGS__);
+#else
+	#define DEBUG_PRINT(...) ;
+#endif
+
+
+
 #define IDLE 0
 #define DRIVE 1
 #define BRAKE 2
- 
-#define DEBUG(...) printf(__VA_ARGS__);
 
 #define BREAK_TIME 10
 #define BREAK_POWER 200
@@ -34,11 +42,13 @@ int main (void)
 	int16_t last_jp = 0;
  
  while(1) {
+ 	//blink led and wait 100ms
   PORTB |= _BV(PORTB5);
   _delay_ms(50);
   PORTB &= ~_BV(PORTB5);
   _delay_ms(50);
 
+	//get the position of the joystick
 	int16_t jp = joystick_get();
 	
 
@@ -47,34 +57,34 @@ int main (void)
 		case IDLE:
 			if(jp) {
 				state = DRIVE;
-				DEBUG("Driving...\n");
+				DEBUG_PRINT("Driving...\n");
 			}
 			break;
 		case DRIVE:
-			printf("%d\t%d\n", jp, last_jp);
+			//has the joystick moved from one side to the other? then go to the brake state
 			if((jp > 0 && last_jp < 0) || (jp < 0 && last_jp > 0)) {
-				DEBUG("Breaking...\n")
+				DEBUG_PRINT("Breaking...\n")
 				cnt = 0;
 				state = BRAKE;
 			}
 			else if(jp > 0) {
-				DEBUG("driving forward %d\n", jp)
-				hbridge_power(jp/2, 0);
+				DEBUG_PRINT("driving forward %d\n", jp)
+				hbridge_power(jp/2, 0); //we half the power to stay safe
 				last_jp = jp;
 			}
 			else if(jp < 0) {
-				if(jp < -MAX_REVERSE_POWER)
-					jp = -MAX_REVERSE_POWER;
-				DEBUG("driving reverse %d\n", jp)
-				hbridge_power(-jp/2, 1);
+				DEBUG_PRINT("driving reverse %d\n", jp)
+				hbridge_power(-jp/4, 1); //a quarter of the power to stay safe when reversing
 				last_jp = jp;
 			} else if(jp == 0) {
-				DEBUG("driving without power\n");
+				//just let it roll
+				DEBUG_PRINT("driving without power\n");
 				hbridge_idle();
 			}
 		break;
 
 		case BRAKE:
+			//we stay at least BREAK_TIME in the BRAKE state
 			if(cnt < BREAK_TIME) {
 				hbridge_brake(BREAK_POWER);
 				cnt++;
@@ -83,7 +93,7 @@ int main (void)
 					cnt = 0;
 					state = IDLE;
 					last_jp = 0;
-					DEBUG("Idle...\n");
+					DEBUG_PRINT("Idle...\n");
 				}
 			}
 		break;
