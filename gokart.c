@@ -28,7 +28,7 @@
 
 #define MAX_REVERSE_POWER 100
 
-#define ROLLOUT_TIME 40
+#define ROLLOUT_TIME 20
 
 int main (void)
 {
@@ -38,6 +38,15 @@ int main (void)
 
  /* set pin 5 of PORTB for output*/
  DDRB |= _BV(DDB5);
+
+	uint8_t tune_mode = 0;
+
+
+	DDRB &= ~(1 << TUNE_IN_PIN);
+	DDRB |= (1 << TUNE_OUT_PIN);
+	PORTB |= (1 << TUNE_IN_PIN);
+	if((PINB & (1 << TUNE_IN_PIN)) == 0)
+		tune_mode = 1;
 
 	uint8_t cnt = 0;
 	uint8_t state = IDLE;
@@ -71,7 +80,14 @@ int main (void)
 			}
 			else if(jp > 0) {
 				DEBUG_PRINT("driving forward %d\n", jp)
-				hbridge_power(jp/2, 0); //we half the power to stay safe
+				if(tune_mode)
+				{
+					DEBUG_PRINT("full power\n");
+					hbridge_power(jp, 0);
+				} else {
+					hbridge_power(jp/2, 0); //we half the power to stay safe
+				}
+
 				last_jp = jp;
 				cnt = 0;
 			}
