@@ -15,10 +15,10 @@
  
 #define DEBUG(...) printf(__VA_ARGS__);
 
-#define BREAK_TIME 20
-#define BREAK_POWER 100
+#define BREAK_TIME 10
+#define BREAK_POWER 200
 
-#define MAX_REVERSE_POWER 50
+#define MAX_REVERSE_POWER 100
 
 int main (void)
 {
@@ -59,14 +59,14 @@ int main (void)
 			}
 			else if(jp > 0) {
 				DEBUG("driving forward %d\n", jp)
-				hbridge_power(jp, 0);
+				hbridge_power(jp/2, 0);
 				last_jp = jp;
 			}
 			else if(jp < 0) {
 				if(jp < -MAX_REVERSE_POWER)
 					jp = -MAX_REVERSE_POWER;
 				DEBUG("driving reverse %d\n", jp)
-				hbridge_power(-jp, 1);
+				hbridge_power(-jp/2, 1);
 				last_jp = jp;
 			} else if(jp == 0) {
 				DEBUG("driving without power\n");
