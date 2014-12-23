@@ -41,10 +41,12 @@ int main (void)
 
 	uint8_t tune_mode = 0;
 
-
+	
 	DDRB &= ~(1 << TUNE_IN_PIN);
 	DDRB |= (1 << TUNE_OUT_PIN);
 	PORTB |= (1 << TUNE_IN_PIN);
+	PORTB &= ~(1 << TUNE_OUT_PIN);
+	_delay_ms(100);
 	if((PINB & (1 << TUNE_IN_PIN)) == 0)
 		tune_mode = 1;
 
