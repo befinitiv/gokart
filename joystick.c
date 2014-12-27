@@ -31,7 +31,7 @@ void joystick_init(void) {
 
 
 int16_t joystick_get(void) {
-	int16_t val = (int16_t)joystick_pos - 127;
+	int16_t val = (int16_t)127 - (int16_t)joystick_pos;
 	val = val * 2;
 
 	if(abs(val) < ZERO_REGION)

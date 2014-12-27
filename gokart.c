@@ -47,9 +47,10 @@ int main (void)
 	PORTB |= (1 << TUNE_IN_PIN);
 	PORTB &= ~(1 << TUNE_OUT_PIN);
 	_delay_ms(100);
-	if((PINB & (1 << TUNE_IN_PIN)) == 0)
+	if((PINB & (1 << TUNE_IN_PIN)) != 0)
 		tune_mode = 1;
 
+	//for(;;)printf("%d\n", (PINB & (1 << TUNE_IN_PIN)));
 	uint8_t cnt = 0;
 	uint8_t state = IDLE;
 	int16_t last_jp = 0;
@@ -81,21 +82,34 @@ int main (void)
 				state = BRAKE;
 			}
 			else if(jp > 0) {
-				DEBUG_PRINT("driving forward %d\n", jp)
+				DEBUG_PRINT("driving forward jp: %d\n", jp)
 				if(tune_mode)
 				{
-					DEBUG_PRINT("full power\n");
-					hbridge_power(jp, 0);
+					uint32_t power = ((uint32_t)jp - 30) * 255 / 210; 
+					DEBUG_PRINT("tuned power: %d\n", power);
+					hbridge_power(power, 0);
 				} else {
-					hbridge_power(jp/2, 0); //we half the power to stay safe
+					uint16_t power = jp/2;
+					DEBUG_PRINT("power: %d\n", power);
+					hbridge_power(power, 0); //we half the power to stay safe
 				}
 
 				last_jp = jp;
 				cnt = 0;
 			}
 			else if(jp < 0) {
-				DEBUG_PRINT("driving reverse %d\n", jp)
-				hbridge_power(-jp/4, 1); //a quarter of the power to stay safe when reversing
+				DEBUG_PRINT("driving reverse jp: %d\n", jp)
+				if(tune_mode) {
+					uint16_t power = -jp/2;
+					DEBUG_PRINT("tuned power: %d\n", power);
+					hbridge_power(power, 1);
+				}
+				else
+				{
+					uint16_t power = -jp/4;
+					DEBUG_PRINT("power: %d\n", power);
+					hbridge_power(power, 1); //a quarter of the power to stay safe when reversing
+				}
 				last_jp = jp;
 				cnt = 0;
 			} else if(jp == 0) {
