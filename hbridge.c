@@ -102,7 +102,7 @@ void hbridge_brake(uint8_t val) {
 	hbridge_dis_l1();
 	hbridge_dis_l2();
 
-	hbridge_en_h1(255);
+	hbridge_en_h1(val);
 	hbridge_en_h2(val);
 }
 

@@ -39,7 +39,7 @@ int16_t joystick_get(void) {
 	int8_t sign = val > 0 ? 1 : -1;
 
 	//normalize to 0-255
-	uint32_t norm_val  = ((uint32_t)val - sign*ZERO_REGION) * 255 / (255-ZERO_REGION); 
+	int32_t norm_val  = ((int32_t)val - sign*ZERO_REGION) * 255 / (255-ZERO_REGION); 
 	
 	return norm_val;
 } 
