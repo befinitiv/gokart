@@ -26,8 +26,7 @@ void joystick_init(void) {
 	ADCSRA |= (1 << ADSC);
 }
 
-#define ZERO_REGION 30
-#define MAX_VALUEJ 240
+#define ZERO_REGION 40
 
 
 int16_t joystick_get(void) {
@@ -35,14 +34,12 @@ int16_t joystick_get(void) {
 	val = val * 2;
 
 	if(abs(val) < ZERO_REGION)
-		val = 0;
+		return 0;
 
-	if(val > MAX_VALUEJ)
-		val = MAX_VALUEJ;
+	int8_t sign = val > 0 ? 1 : -1;
 
-	if(val < -MAX_VALUEJ)
-		val = -MAX_VALUEJ;
-
+	//normalize to 0-255
+	uint32_t norm_val  = ((uint32_t)val - sign*ZERO_REGION) * 255 / (255-ZERO_REGION); 
 	
-	return val;
+	return norm_val;
 } 
