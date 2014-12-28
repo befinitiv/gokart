@@ -73,7 +73,7 @@ parameter param[] = {
 {
 .fwd = {
 	.max_power = 255,
-	.ramp_start_power = 60,
+	.ramp_start_power = 70,
 	.ramp_dp = 30
 	},
 .rev = {
@@ -107,7 +107,7 @@ uint8_t check_mode(void) {
 #define BREAK_POWER_FWD 200
 #define BREAK_POWER_REV 200
 
-#define ROLLOUT_TIME 20
+#define ROLLOUT_TIME 10
 
 int main (void)
 {
@@ -161,7 +161,7 @@ int main (void)
 				drive_parameter *dp = forward ? &p->fwd : &p->rev;
 
 				//normalize joystick position to max power
-				uint32_t norm_power = abs(jp) * dp->max_power / 255;
+				uint32_t norm_power = abs(jp) * (uint16_t)dp->max_power / (uint16_t)255;
 				
 				//if the wanted power is higher than the ramp start and the last power was lower, we ramp up 
 				if(norm_power > dp->ramp_start_power && norm_power > last_power) {
