@@ -46,12 +46,12 @@ parameter param[] = {
 //ultra slow mode
 {
 .fwd = {
-	.max_power = 50,
+	.max_power = 70,
 	.ramp_start_power = 30,
 	.ramp_dp = 5
 	},
 .rev = {
-	.max_power = 50,
+	.max_power = 60,
 	.ramp_start_power = 30,
 	.ramp_dp = 5
 	}
@@ -59,7 +59,7 @@ parameter param[] = {
 //higher forward speed
 {
 .fwd = {
-	.max_power = 120,
+	.max_power = 140,
 	.ramp_start_power = 30,
 	.ramp_dp = 10
 	},
@@ -73,7 +73,7 @@ parameter param[] = {
 {
 .fwd = {
 	.max_power = 255,
-	.ramp_start_power = 70,
+	.ramp_start_power = 60,
 	.ramp_dp = 30
 	},
 .rev = {
